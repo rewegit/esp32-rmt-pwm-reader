@@ -1,7 +1,7 @@
 # ESP32 RMT RC PWM Library
 ## Introduction
 **Warning** <br>
-This collection of functions lib is the result of my first involvement with the ESP32 and especially its RMT hardware. Even though it works for me since a while without any problems, But i would not call it a robust plug&play Arduino-ESP32-lib.
+This collection of cpp functions is the result of my first involvement with the ESP32 and especially its RMT hardware. Even though it works for me since a while without any problems, But i would not call it a robust plug&play Arduino-ESP32-lib.
 It is meant for using the ESP32 with the Arduino Framework and was developed with the [Platformio](https://platformio.org/install/ide?install=vscode) extension in [VSCode](https://code.visualstudio.com).
 It uses the special hardware component RMT, so it can only be used for ESP32 chips with this component.
 
@@ -17,14 +17,12 @@ The purpose of this library is to address and handle these issues.
 
 - To tackle point 1, a state machine has been implemented to detect whether a signal is stable. The states are categorized as `NO_SIGNAL`, `UNSTABLE`, and `STABLE`. The failsafe function returns `pulse_neutral`, similar to what is commonly done with newer digital receivers. However, unlike those receivers, the library provides the ability to determine whether the transmitter is still active by checking the status.
 
-Please note that the following sections will provide more detailed information about the features and usage of this library.
-
 This is a CPP library for the ESP32-S1 microcontroller that utilizes the RMT hardware to handle RC PWM signals. The library provides the following features:
 
 - Utilization of the RMT hardware to offload the processor.
 - Simultaneous reading of up to 8 RC PWM channels.
 - Support for reading both raw PWM values (`pwm_get_rawPwm`) and scaled values (`pwm_get_scaledPwm`).
-- Scaling of PWM pulse based on predefined constants (or automatic measurement of min/max values), allowing individual adjustment of minimum, neutral and maximum values. (Default: min=1000, neutral=1500, max=2000)
+- Scaling of PWM pulse based on predefined constants (or automatic measurement of min/max values), allowing individual adjustment of minimum, neutral and maximum values. (Default: min=1000, neutral=1500, max=2000  all in µs) 
 - Separate scaling of the min-neutral and neutral-max ranges. For example, if the min/max calibration defines a min of 800, max of 2100, and neutral of 1200, the range 800-1200 will be scaled to 1000-1500, and 1200-2100 will be scaled to 1500-2000.
 - Support for different PWM frequencies per channel (tested range: 20Hz - 200Hz). The phase relationship between channels is irrelevant. Compatibility with various receivers that may be connected to the channels. To avoid uint32_t overflow for lower frequencies, a prescaler must be set.
 
@@ -105,8 +103,8 @@ void setup() {
 
 ```
 ### Read the data of interest 
-The lib offers many redundant functions for reading the individual data but also access to the complete data structure. Details can be found in the function descriptions in the esp32-rmt-pwm-reader.h.
-In esp_pwm_read.cpp different variants are shown.  
+The lib offers many redundant functions for reading the individual data but also access to the complete data structure. Details can be found in the function descriptions in the [esp32-rmt-pwm-reader.h](lib/esp32-rmt-pwm-reader/esp32-rmt-pwm-reader.h).
+In [esp_pwm_read.cpp](src/esp32_pwm_read.cpp) different variants are shown.  
 ```cpp
 void loop(){
     // Reading the actual pulse width of channel 1 
@@ -163,9 +161,9 @@ The following data are output:
 - scaled &nbsp; - current pwm value scaled to min/neutral/max
 - period &nbsp; - period of the channel in µs
 - freq Hz - pwm frequency of the channel
-- p_min &emsp;- minimum pwm value specified or measured
+- p_min &emsp;- minimum pwm value preset or determined
 - p_ntrl &nbsp; - neutral pwm value preset or determined
-- p_max &nbsp; - maximum pwm value specified or determined
+- p_max &nbsp; - maximum pwm value preset or determined
 - dc &emsp; &emsp; &nbsp;- duty cycle calculated with raw and period
 - state &emsp; &nbsp;- current channel status 
 

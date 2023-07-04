@@ -1,5 +1,5 @@
 # How it works
-Here is a description of how the ESP32 RMT hardware can be used in general for the acquisition of PWM signals and how I have implemented this concretely.<br>
+Here is a description of how the ESP32 RMT hardware can be used in general for the acquisition of RC PWM signals and how I have implemented this concretely.<br>
 I will not go into the question whether it makes sense at all to use RMT for this task (one can be divided on that).
 
 The general description of how the RMT works can be found here:<br>
@@ -17,7 +17,6 @@ The question is, when is a signal reception finished? The answer can be found he
 **In receive mode, when no edge is detected on the input signal for longer than idle_thres channel clock cycles, the receive process is finished**.<br>
 
 Normally, no periodic signals can be measured completely with this method, since there is no pause between the individual signals that could be used to declare the receiving as finished. This is also true for standard RC PWM signals. However, with the PWM signal we are not interested in the complete signal, but only in the width of the positive pulse of the signal.
-
 ![pic001](../Images/pic001.png)
 
 The PWM pulse has a typical length between 1 and 2 ms while the period is typically 20ms. Since we only need the width of the positive pulse, we can stop receiving after the falling edge of the positive pulse (which triggers the interrupt). For this we only need to set the **RMT RX idle threshold value** to a value greater than 2ms.<br>
