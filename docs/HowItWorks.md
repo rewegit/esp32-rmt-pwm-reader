@@ -17,39 +17,6 @@ The question is, when is a signal reception finished? The answer can be found he
 **In receive mode, when no edge is detected on the input signal for longer than idle_thres channel clock cycles, the receive process is finished**.<br>
 
 Normally, no periodic signals can be measured completely with this method, since there is no pause between the individual signals that could be used to declare the receiving as finished. This is also true for standard RC PWM signals. However, with the PWM signal we are not interested in the complete signal, but only in the width of the positive pulse of the signal.
-```wavedrom
-{
-  signal: [
-    {node: "..A...........C"},
-    {node: "..F..G...B"},
-    
-    {
-      name: "PWM", wave: "0.1|.0...|....1|.0...|", node:  ".....H...........J" },
-    {node:  ".........I"},
-    {
-      name: "irq", wave: "0........4.|0........4.", data: ["irq-service"], node: ".........I...........K" },
-        
-  ],
-  head:{
-  text:'IDLE_TRESHOLD and irq',
-  tick:0,
-  every:2
- },
-    foot:{
-    text:'figure: 2',
-   
- },
-    edge: [
-    "F+G pulse width 1-2ms",
-    "A+C Period 20ms",
-    "G+B IDLE_TRESHOLD",
-    'H~>I receive process finished',
-    'J~>K receive process finished'
-  ] 
-}
-
-```
-
 
 ![pic001](../Images/pic001.png)
 
