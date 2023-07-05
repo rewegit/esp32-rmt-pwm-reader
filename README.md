@@ -148,10 +148,10 @@ Tested on MacOS with VSCode. The integrated shell was ZSH.
 
 
 ![unstable:](Images/ESP32_RMT_Example_Robbe_Luna_UNSTABLE.gif) 
-Receiver switched off<br>
+Transmitter switched off<br>
 
 ![Receiver switched on](<./Images/ESP32_RMT_Example_Robbe_Luna_STABLE.gif>)
-Receiver switched on. control stick channel 1 is moved<br><br>
+Transmitter switched on. control stick channel 1 is moved<br><br>
 
 The following data are output:
 
