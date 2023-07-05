@@ -127,7 +127,7 @@ However, it may be that the reader is only a partial functionality that should b
 In this case the Lib must provide for a tidy cleanup, so that the necessary Ressorcen are released. The pwm_cleanup() function does the job.<br>
 In this scenario, the initialization cannot simply be done in the setup function, since that is called only once at program startup.
 Instead, starting and stopping the PWM reader should be outsourced to separate functions.
-In ServoTester deluxe you can see a simple variant for this.
+In [ServoTester deluxe](https://github.com/rewegit/Servotester_Deluxe) you can see a simple variant for this.
 
 ## Examples
 The sample application simply outputs a table of the most important values of all channels.
