@@ -167,7 +167,7 @@ The following data are output:
 - dc &emsp; &emsp; &nbsp;- duty cycle calculated with raw and period
 - state &emsp; &nbsp;- current channel status 
 
-Another example shows the integration of the lib in my fork of the Servotester Deluxe. 
+Another example shows the integration of the lib in my fork of the [Servotester Deluxe](https://github.com/rewegit/Servotester_Deluxe). 
 
 ## License
 [MIT License](https://github.com/kapraran/FreqCountESP/blob/master/LICENSE)
