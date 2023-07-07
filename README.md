@@ -2,7 +2,7 @@
 ## Introduction
 **Warning** <br>
 This collection of cpp functions is the result of my first involvement with the ESP32 and especially its RMT hardware. Even though it works for me since a while without any problems, But i would not call it a robust plug&play Arduino-ESP32-lib.
-It is meant for using the ESP32 with the Arduino Framework and was developed with the [Platformio](https://platformio.org/install/ide?install=vscode) extension in [VSCode](https://code.visualstudio.com).
+It is meant for using the ESP32 with the Arduino Framework **Platform: espressif32@6.1.0** and was developed with the [Platformio](https://platformio.org/install/ide?install=vscode) extension in [VSCode](https://code.visualstudio.com).
 It uses the special hardware component RMT, so it can only be used for ESP32 chips with this component.
 
 ### Why did I create this library?
@@ -64,15 +64,12 @@ If you are working with PlatformIO, you can use the directory structure of this 
 
 ## Usage
 An example implementation can be found in esp32_pwm_read.cpp. Only the basic steps are shown here.
+
 ### Include the Library
 ```cpp
 #include <esp32-rmt-pwm-reader.h>
-```
-If the lib is located in an include path of its project. or
-```cpp
-#include "esp32-rmt-pwm-reader.h"
-```
-if the lib is located directly in the project directory.
+// #include "esp32-rmt-pwm-reader.h" // if the lib is located directly in the project directory
+````
 
 ### Initialize
 Set which pin to use, configure the default values (if necessary) and start the esp32 rmt-read functionality
@@ -155,17 +152,19 @@ Transmitter switched on. control stick channel 1 is moved<br><br>
 
 The following data are output:
 
-- Channel 
-- offset &emsp;- distance of the rising edge of the channel to the rising edge of channel 0 in µs
-- raw &emsp; &nbsp; &nbsp;- currently read pwm value
-- scaled &nbsp; - current pwm value scaled to min/neutral/max
-- period &nbsp; - period of the channel in µs
-- freq Hz - pwm frequency of the channel
-- p_min &emsp;- minimum pwm value preset or determined
-- p_ntrl &nbsp; - neutral pwm value preset or determined
-- p_max &nbsp; - maximum pwm value preset or determined
-- dc &emsp; &emsp; &nbsp;- duty cycle calculated with raw and period
-- state &emsp; &nbsp;- current channel status 
+| output | description |
+| ------ | ----------- |
+| Channel| channel number 
+| offset | distance of the rising edge of the channel to the rising edge of channel 0 in µs
+| raw    | currently read pwm value
+| scaled | current pwm value scaled to min/neutral/max
+| period | period of the channel in µs
+| freq Hz | pwm frequency of the channel
+| p_min | minimum pwm value preset or determined
+| p_ntrl | neutral pwm value preset or determined
+| p_max | maximum pwm value preset or determined
+| dc | duty cycle calculated with raw and period
+| state | current channel status 
 
 Another example shows the integration of the lib in my fork of the [Servotester Deluxe](https://github.com/rewegit/Servotester_Deluxe). 
 
