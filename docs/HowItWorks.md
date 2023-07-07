@@ -224,7 +224,7 @@ set for the corresponding channel, the current pulse width of the channel is sto
 A range of validity can be defined with the defines. By default, the current pulse width at the transition from UNSTABLE -> STABLE may be max 20% of the preset pulse_neutral value.<br>
 This is to prevent completely nonsensical values from being stored. E.g. if the corresponding input element was not on center position but on an end position.<br>
 A new reading of pulse_neutral can be initiated by resetting the status to UNSTABLE.<br>
-This happens automatically when the transmitter is switched off, but can also be initiated via Sowftware. At the same time pulse_neutral can be reset.
+This happens automatically when the transmitter is switched off, but can also be initiated via Software. At the same time pulse_neutral can be reset.
 
 ```cpp
 pwm_set_channel_pulse_neutral(channel, SCALE_PULSE_NEUTRAL);  // reset pulse_neutral
