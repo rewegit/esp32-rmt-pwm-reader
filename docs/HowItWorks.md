@@ -325,23 +325,28 @@ Then the ISR handler is deregistered, the interrupt queue is cleared, the contro
 
 ```mermaid
 ---
-title:  calculateOffset()
+title: pwm_cleanup()()
 ---
-%%{ init: {'theme': 'base', "graph": {"htmlLabels": true}} }%%
-flowchart TD
-    cleanupLoop[Cleanup Loop]
-    cleanupLoop -->|Channel < NumberOfChannels| resetRAM[Reset RAM Address]
-    resetRAM --> disableRx[Disable RX]
-    disableRx --> releaseMemory[Release Memory]
-    releaseMemory --> stopReceiving[Stop Receiving]
-    stopReceiving --> setPinMode[Set Pin Mode]
-    setPinMode --> incrementChannel[Increment Channel]
-    incrementChannel -->|Next Channel| cleanupLoop
-    incrementChannel -->|All Channels Cleaned| deregisterISR[Deregister ISR Handler]
-    deregisterISR -->|ISR Deregistered| deleteQueue[Delete Interrupt Queue]
-    deleteQueue --> deleteTask[Delete Control Task]
-    deleteTask -->deleteChannels[Delete PWM Channels]
-    deleteChannels --> return
-    stopReceiving -->|Stop Receiving Failed| return
-    deregisterISR -->|ISR Deregister Failed| return
+%%{init:{"theme":"base"}}%%
+
+graph TB
+    Start --> ForLoop{For each<br>channels}
+    ForLoop --> RST[Reset write ram address]
+    RST --> DISRX[Disable data reception]
+    DISRX --> RELMEM[Release memory for possible transmitters]
+    RELMEM --> STOPRX{Stop data<br>reception}
+    STOPRX -- if successful --> SetPIN[Set pin to INPUT]
+    STOPRX -- if unsuccessful --> ReturnFAIL1[Return ESP_FAIL]
+    SetPIN --> EndForLoop{End of for loop}
+    EndForLoop -- Continue to next channel --> ForLoop
+    EndForLoop -- All channels processed --> DEREGISR{Deregister<br>ISR handler}
+    DEREGISR -- ESP_OK --> DELETEQ[Delete interruptQueue]
+    DEREGISR -- ESP_FAIL --> ReturnFAIL2[Return ESP_FAIL]
+    DELETEQ --> DELETETASK[Delete controlTask]
+    DELETETASK --> DELETECHAN[Delete pwm_channels]
+    DELETECHAN --> ReturnOK[Return ESP_OK]
+
+    style ReturnFAIL1 fill: red,color:white
+    style ReturnFAIL2 fill: red,color:white
+    style ReturnOK fill: green,color:white
 ```

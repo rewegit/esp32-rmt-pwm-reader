@@ -36,6 +36,15 @@ PwmState getNewState(const uint8_t channel);
 uint16_t calculateChannelZero(const uint8_t channel);
 void calculateChannelMinMax(const uint8_t channel);
 
+/**
+ * Interrupt service routine handler for the RMT peripheral.
+ *
+ * @param arg pointer to the argument passed to the ISR
+ *
+ * @return void
+ *
+ * @throws None
+ */
 // Reference https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/rmt.html#application-examples
 static void IRAM_ATTR rmt_isr_handler(void *arg) {
     // the isr takes about 6us (measured with gpio_set_level())
@@ -104,6 +113,14 @@ static void pwm_control_task(void *parms) {
     }
 }
 
+/**
+ * Initializes the PWM reader with the given channel pins and number of channels.
+ *
+ * @param channelPins The array of channel pins.
+ * @param numberOfChannels The number of PWM channels.
+ *
+ * @throws None
+ */
 void pwm_reader_init(const uint8_t channelPins[], const int numberOfChannels) {
     _numberOfChannels = numberOfChannels;
 
