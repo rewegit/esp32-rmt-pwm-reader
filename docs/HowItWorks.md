@@ -100,19 +100,42 @@ It is therefore essential to ensure that configuration changes affecting the RMT
 title: pwm_reader_begin()
 ---
 %%{init:{"theme":"base"}}%%
-flowchart TD
-    initializeQueue[Initialize Queue] -->|Success| createTask[Create Control Task]
-    createTask -->|Success| configureChannels[Configure Channels]
-    configureChannels -->|Success| enableInterrupt[Enable Interrupt]
-    enableInterrupt -->|Success| startReading[Start Reading]
-    startReading -->|Success| registerIsrHandler[Register ISR Handler]
-    registerIsrHandler -->|Success| returnOK[Return ESP_OK]    
-    initializeQueue -->|Failure| returnFail[Return ESP_FAIL]
-    createTask -->|Failure| returnFail
-    configureChannels -->|Failure| returnFail
-    enableInterrupt -->|Failure| returnFail
-    startReading -->|Failure| returnFail
-    registerIsrHandler -->|Failure| returnFail
+graph TD;
+    A(Start reader_begin)
+    A --> B[create Queue]
+    B --> C[create control_task]
+    C --> L1
+    B --> |Failure| returnFail1[ESP_FAIL]
+    C --> |Failure| returnFail2[ESP_FAIL]
+
+    subgraph Channel Loop [Configure_loop for each channel &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp]
+        L1(Start ConfigureLoop)
+        L1 --> L2[set RMT channel <br> config defaults, <br> pin, channel]
+        L2 --> L3[check pin]
+        L3 --> L4[set IDLE_TRESHOLD]
+        L4 --> L5[configure RMT channel]
+        L5 --> L6[enable irq]
+        L6 --> L7[start reading]
+        L7 --> L8(End ConfigureLoop)
+
+        L3 -->|Failure| returnFail[ESP_FAIL]
+        L4 -->|Failure| returnFail[ESP_FAIL]
+        L5 -->|Failure| returnFail[ESP_FAIL]
+        L6 -->|Failure| returnFail[ESP_FAIL]
+        L7 -->|Failure| returnFail[ESP_FAIL]
+
+    end
+
+    L8 --> D[register isr handler]
+    D --> E(End reader_begin)
+
+    D -->|Failure| returnFail3[ESP_FAIL]
+
+    style returnFail1 fill: red,color:white
+    style returnFail2 fill: red,color:white
+    style returnFail3 fill: red,color:white
+    style returnFail fill: red,color:white
+    style E fill: green,color:white
 ```
 
 
@@ -127,6 +150,7 @@ title: rmt_isr_handler()
 ---
 %%{init:{"theme":"base"}}%%
 flowchart TD
+    start([start]) -->
     readInterruptStatus[Read Channel Interrupt Status] -->|Interrupt Occurred| processChannels[Process Channel]
     processChannels -->|Channel Data Available| disableReceive[Disable Receive]
     disableReceive --> releaseMemory[Release Memory]
@@ -147,6 +171,7 @@ title:  pwm_control_task()
 ---
 %%{ init: {'theme': 'base', "graph": {"htmlLabels": true}} }%%
 flowchart TD
+        start([start]) -->
         initialize[Initialize isrData] --> loop[Loop]
         loop -->|xQueueReceive Data| calculateData[ Calculate Data<br/>last period / period <br/> frequency <br/> pulse <br/> last irq time]
         calculateData -->calculateState[Calculate State]
@@ -237,6 +262,7 @@ title:  calculateChannelZero()
 ---
 %%{ init: {'theme': 'base', "graph": {"htmlLabels": true}} }%%
 flowchart TD
+        start([start]) --> 
         input[Input: channel] -->readData[Read data and config]
         readData  --> calculateLowerLimit[Calculate Lower Limit]
         calculateLowerLimit -->calculateUpperLimit[Calculate Upper Limit]
@@ -274,6 +300,7 @@ title:  calculateChannelMinMax()
 ---
 %%{ init: {'theme': 'base', "graph": {"htmlLabels": true}} }%%
 flowchart TD
+        start([start]) --> 
         input[Input: channel] --> readData[Read data and config]
         readData --> calculateLimits[Calculate Limits]
         calculateLimits --> checkStability[Check calibrate time]
@@ -301,6 +328,7 @@ title:  ccalculateOffset()
 ---
 %%{ init: {'theme': 'base', "graph": {"htmlLabels": true}} }%%
 flowchart TD
+     start([start]) --> 
      input[Input: channel] --> readData[Read<br>data and config]
      readData -->checkStability[Check STABLE]
      checkStability -->|STABLE| checkFrequency[Check Frequency]
@@ -328,25 +356,28 @@ Then the ISR handler is deregistered, the interrupt queue is cleared, the contro
 title: pwm_cleanup()()
 ---
 %%{init:{"theme":"base"}}%%
+graph TD;
+    A(Start pwm_cleanup)
+    A --> L1
+    subgraph Channel Loop [for each<br>channel &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp]
+        L1(start channel clean up) --> L2[Reset write ram address]
+        L2 --> L3[Disable data reception]
+        L3 --> L4[Release memory<br>for possible transmitters]
+        L4 --> L5[Stop data reception]
+        L5 --> L6[set pin to <br>standard INPUT]
+        L6 --> L7(end channel clean up)
 
-graph TB
-    Start --> ForLoop{For each<br>channels}
-    ForLoop --> RST[Reset write ram address]
-    RST --> DISRX[Disable data reception]
-    DISRX --> RELMEM[Release memory for possible transmitters]
-    RELMEM --> STOPRX{Stop data<br>reception}
-    STOPRX -- if successful --> SetPIN[Set pin to INPUT]
-    STOPRX -- if unsuccessful --> ReturnFAIL1[Return ESP_FAIL]
-    SetPIN --> EndForLoop{End of for loop}
-    EndForLoop -- Continue to next channel --> ForLoop
-    EndForLoop -- All channels processed --> DEREGISR{Deregister<br>ISR handler}
-    DEREGISR -- ESP_OK --> DELETEQ[Delete interruptQueue]
-    DEREGISR -- ESP_FAIL --> ReturnFAIL2[Return ESP_FAIL]
-    DELETEQ --> DELETETASK[Delete controlTask]
-    DELETETASK --> DELETECHAN[Delete pwm_channels]
-    DELETECHAN --> ReturnOK[Return ESP_OK]
+        L5 -->|Failure| returnFail1[ESP_FAIL]
+    end
 
-    style ReturnFAIL1 fill: red,color:white
-    style ReturnFAIL2 fill: red,color:white
-    style ReturnOK fill: green,color:white
+    L7 --> B[Deregister<br>ISR handler]
+    B --> C[Delete interruptQueue]
+    C --> D[Delete controlTask]
+    D --> E[end pwm_cleanup]
+
+    B -->|Failure| returnFail2[ESP_FAIL]
+
+    style returnFail1 fill: red,color:white
+    style returnFail2 fill: red,color:white
+    style E fill: green,color:white
 ```
