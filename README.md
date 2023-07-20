@@ -2,7 +2,7 @@
 ## Introduction
 **Warning** <br>
 This collection of cpp functions is the result of my first involvement with the ESP32 and especially its RMT hardware. Even though it works for me since a while without any problems, But i would not call it a robust plug&play Arduino-ESP32-lib.
-It is meant for using the ESP32 with the Arduino Framework **Platform: espressif32@6.1.0** and was developed with the [Platformio](https://platformio.org/install/ide?install=vscode) extension in [VSCode](https://code.visualstudio.com).
+It is meant for using the ESP32 with the Arduino Framework **Platform: espressif32@6.1.0** (compatible with older framework espressif32@3.2.0) and was developed with the [Platformio](https://platformio.org/install/ide?install=vscode) extension in [VSCode](https://code.visualstudio.com).
 It uses the special hardware component RMT, so it can only be used for ESP32 chips with this component.
 
 ### Why did I create this library?
