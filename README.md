@@ -168,6 +168,9 @@ The following data are output:
 
 Another example shows the integration of the lib in my fork of the [Servotester Deluxe](https://github.com/rewegit/Servotester_Deluxe). 
 
+## History
+see [Changelog](docs/Changelog.md)
+
 ## License
 [MIT License](https://github.com/kapraran/FreqCountESP/blob/master/LICENSE)
 

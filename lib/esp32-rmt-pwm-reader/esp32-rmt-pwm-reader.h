@@ -30,7 +30,7 @@
 
 
 #include "esp32-hal-log.h"  // loglevel ist set as build_flags = -DCORE_DEBUG_LEVEL in platformio.ini
-//static const char *TAG = "rmt_pwm_reader";
+static const char *TAG = "rmt_pwm_reader";
 
 // defines for pulse calculations
 #define STABLE_COUNTER 10  // periods that must be in limit before status changes from UNSTABLE to STABLE
