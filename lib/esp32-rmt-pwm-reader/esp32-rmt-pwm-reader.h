@@ -4,7 +4,8 @@
 * @author:	R.W.
 * @date:	28.04.23
 * @brief:
-* @history:
+* @history: 20.07.23 rw compatibility with older versions of espressif framework
+*                       especially espressif32@3.2.0 for esp32 Soundcontroller
 *********************************************************************************
 **/
 
@@ -18,13 +19,18 @@
 #include "soc/rmt_reg.h"     // for rmt channel status
 #include "soc/rmt_struct.h"  // for rmt ir
 
-// DEBUG:
 #include "driver/gpio.h"  // for direct gpio access
+
+#ifndef GPIO_NUM_NC  // not defined in older versions of gpio.h
+#define GPIO_NUM_NC -1
+
+#endif  //GPIO_NUM_NC
+
 // #define PIN_TST GPIO_NUM_4
 
 
 #include "esp32-hal-log.h"  // loglevel ist set as build_flags = -DCORE_DEBUG_LEVEL in platformio.ini
-static const char *TAG = "rmt_pwm_reader";
+//static const char *TAG = "rmt_pwm_reader";
 
 // defines for pulse calculations
 #define STABLE_COUNTER 10  // periods that must be in limit before status changes from UNSTABLE to STABLE

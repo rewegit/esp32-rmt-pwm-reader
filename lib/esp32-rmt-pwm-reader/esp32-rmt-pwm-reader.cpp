@@ -146,7 +146,6 @@ void pwm_reader_init(const uint8_t channelPins[], const int numberOfChannels) {
         // set pinMode for pwm pins
         pinMode(pwm_channels[channel].pin, INPUT_PULLDOWN);
     }
-
 }
 
 esp_err_t pwm_reader_begin() {
@@ -160,13 +159,20 @@ esp_err_t pwm_reader_begin() {
     }
 
     for (uint8_t channel = 0; channel < _numberOfChannels; channel++) {
-        // default values defined rmt.h
-        rmt_config_t rxConfig = RMT_DEFAULT_CONFIG_RX((gpio_num_t)pwm_channels[channel].pin,
-                                                      (rmt_channel_t)pwm_channels[channel].channel);
+        rmt_config_t rxConfig = {};
+
+        rxConfig.rmt_mode = RMT_MODE_RX;
+        rxConfig.channel = (rmt_channel_t)pwm_channels[channel].channel;
+        rxConfig.clk_div = 80;
+        rxConfig.gpio_num = (gpio_num_t)pwm_channels[channel].pin;
+        rxConfig.mem_block_num = 1;
+        rxConfig.rx_config.filter_en = true;
+        rxConfig.rx_config.filter_ticks_thresh = 100;
+        rxConfig.rx_config.idle_threshold = IDLE_TRESHOLD;
+
         if (rxConfig.gpio_num == GPIO_NUM_NC) {  // error check if pin connected to s/w
             return ESP_FAIL;
         }
-        rxConfig.rx_config.idle_threshold = IDLE_TRESHOLD;  // Receiving is considered finished when IDLE_TRESHOLD_us no edge change (ir) occurs.
 
         if (rmt_config(&rxConfig) != ESP_OK) {              // configure RMT channel
             return ESP_FAIL;
