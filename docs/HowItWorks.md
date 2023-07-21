@@ -329,7 +329,7 @@ title:  ccalculateOffset()
 %%{ init: {'theme': 'base', "graph": {"htmlLabels": true}} }%%
 flowchart TD
      start([start]) --> 
-     input[Input: channel] --> readData[Read<br>data and config]
+     input[Input: channel] --> readData[Read data]
      readData -->checkStability[Check STABLE]
      checkStability -->|STABLE| checkFrequency[Check Frequency]
      checkFrequency -->|Frequency Difference > 2Hz| offsetZero[Set Offset to 0]

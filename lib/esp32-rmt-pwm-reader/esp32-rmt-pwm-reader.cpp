@@ -296,7 +296,6 @@ const int32_t pwm_get_rawPwm(const uint8_t channel) {
  */
 int32_t calculateOffset(const uint8_t channel) {
     const auto &data = pwm_channels[channel].data;
-    const auto &config = pwm_channels[channel].config;
 
     if ((data.state != PwmState::STABLE) ||
         (pwm_channels[0].data.state != PwmState::STABLE)) {
